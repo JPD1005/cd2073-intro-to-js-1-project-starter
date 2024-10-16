@@ -29,7 +29,7 @@ const cart = [];
   - if the product is not already in the cart, add it to the cart
 */
 
-// This Function searches through the products array using given SKU, and returns found the found product
+// findProduct searches through the products array using given SKU, and returns the found product
 function findProduct(productId) {
   let foundProduct;
   products.forEach(product => {
@@ -137,7 +137,7 @@ function conversion(price) {
   return Number.parseFloat(price).toFixed(2);
 }
 
-//This function converts each original price to the rates of the new currency
+//convert() converts each original price to the rates of the new currency
 function convert(newPrice) {
   let i = 0;
   products.forEach(product => {
@@ -154,7 +154,7 @@ function convert(newPrice) {
    npm run test
 */
 
-//This function takes original prices and replaces them with the value of the new currency. USD is default.
+//currency() takes original prices and replaces them with the value of the new currency. USD is default.
 function currency(money) {
   if (money === "EUR") {
     convert(0.92);
@@ -177,6 +177,5 @@ module.exports = {
    cartTotal,
    pay, 
    emptyCart,
-   /* Uncomment the following line if completing the currency converter bonus */
    currency,
 }
