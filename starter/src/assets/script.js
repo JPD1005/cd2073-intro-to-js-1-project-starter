@@ -29,18 +29,23 @@ const cart = [];
   - if the product is not already in the cart, add it to the cart
 */
 
-function addProductToCart(productId) {
+// This Function searches through the products array using given SKU, and returns found the found product
+function findProduct(productId) {
   let foundProduct;
   products.forEach(product => {
     if (product.productId === productId) {
       foundProduct = product;
-      foundProduct.quantity += 1;
-      if (cart.indexOf(foundProduct) === -1) {
-        cart.push(foundProduct);
-      }
     }
-  }
-  )};
+  })
+  return foundProduct;
+}
+
+function addProductToCart(productId) {
+  const foundProduct = findProduct(productId);
+  foundProduct.quantity += 1;
+  if (cart.indexOf(foundProduct) === -1) {
+    cart.push(foundProduct);
+  }}
 
 /* Create a function named increaseQuantity that takes in the productId as an argument
   - increaseQuantity should get the correct product based on the productId
@@ -48,13 +53,8 @@ function addProductToCart(productId) {
 */
 
 function increaseQuantity(productId) {
-  let foundProduct;
-  products.forEach(product => {
-    if (product.productId === productId) {
-      foundProduct = product;
-      foundProduct.quantity += 1;
-    }
-  })
+  const foundProduct = findProduct(productId);
+  foundProduct.quantity++;
 }
 
 /* Create a function named decreaseQuantity that takes in the productId as an argument
@@ -63,18 +63,13 @@ function increaseQuantity(productId) {
   - if the function decreases the quantity to 0, the product is removed from the cart
 */
 function decreaseQuantity(productId) {
-  let foundProduct;
-  products.forEach(product => {
-    if (product.productId === productId) {
-      foundProduct = product;
-      foundProduct.quantity -= 1;
-      if (foundProduct.quantity === 0) {
-        let productIndex = cart.indexOf(foundProduct);
-        cart.splice(productIndex, 1);
-      }
+  const foundProduct = findProduct(productId);
+  foundProduct.quantity -= 1;
+  if (foundProduct.quantity === 0) {
+      let productIndex = cart.indexOf(foundProduct);
+      cart.splice(productIndex, 1);
     }
-  })
-}
+  }
 
 /* Create a function named removeProductFromCart that takes in the productId as an argument
   - removeProductFromCart should get the correct product based on the productId
@@ -83,15 +78,10 @@ function decreaseQuantity(productId) {
 */
 
 function removeProductFromCart(productId) {
-  let foundProduct;
-  products.forEach(product => {
-    if (product.productId === productId) {
-      foundProduct = product;
-      foundProduct.quantity = 0;
-      let productIndex = cart.indexOf(foundProduct);
-      cart.splice(productIndex, 1);
-    }
-  })
+  const foundProduct = findProduct(productId);
+  foundProduct.quantity = 0;
+  let productIndex = cart.indexOf(foundProduct);
+  cart.splice(productIndex, 1);
 }
 
 let totalPaid = 0;
@@ -137,6 +127,26 @@ function pay(amount) {
 
 /* Place stand out suggestions here (stand out suggestions can be found at the bottom of the project rubric.)*/
 
+const originalPrices = [];
+  products.forEach(product => {
+    originalPrices.push(product.price);
+})
+
+// This function eliminates all digits to the right of the decimal point in converted currency except for the first two.
+function conversion(price) {
+  return Number.parseFloat(price).toFixed(2);
+}
+
+//This function converts each original price to the rates of the new currency
+function convert(newPrice) {
+  let i = 0;
+  products.forEach(product => {
+    product.price = originalPrices[i];
+    product.price *= newPrice;
+    i++;
+    product.price = conversion(product.price);
+  })
+}
 
 /* The following is for running unit tests. 
    To fully complete this project, it is expected that all tests pass.
@@ -144,9 +154,22 @@ function pay(amount) {
    npm run test
 */
 
+//This function takes original prices and replaces them with the value of the new currency. USD is default.
+function currency(money) {
+  if (money === "EUR") {
+    convert(0.92);
+  } else if (money === "YEN") {
+    convert(149.5);
+  } else {
+    convert(1);
+  }
+}
+
+
 module.exports = {
    products,
    cart,
+   originalPrices,
    addProductToCart,
    increaseQuantity,
    decreaseQuantity,
@@ -155,5 +178,5 @@ module.exports = {
    pay, 
    emptyCart,
    /* Uncomment the following line if completing the currency converter bonus */
-   // currency
+   currency,
 }
